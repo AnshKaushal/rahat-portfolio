@@ -1,27 +1,6 @@
 import { Timeline } from "@/components/Timeline"
 import Image from "next/image"
 
-const timelineData = [
-  {
-    title: "Event Title",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum in nisi commodo, aliquet velit ac, dapibus elit.",
-    image: "https://picsum.photos/seed/1/400/250",
-  },
-  {
-    title: "Event Title",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum in nisi commodo, aliquet velit ac, dapibus elit.",
-    image: "https://picsum.photos/seed/2/400/250",
-  },
-  {
-    title: "Event Title",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum in nisi commodo, aliquet velit ac, dapibus elit.",
-    image: "https://picsum.photos/seed/3/400/250",
-  },
-]
-
 const data = [
   {
     title: "2024",
