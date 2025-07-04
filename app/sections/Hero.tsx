@@ -102,7 +102,7 @@ export default function Hero() {
               Rahat Sunil
             </h2>
             <p className="text-lg text-gray-600 font-medium tracking-wider uppercase">
-              Project Manager / Content Strategist
+              Project Manager / Content & Social Media Strategist
             </p>
           </div>
           
