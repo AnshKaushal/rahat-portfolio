@@ -1,12 +1,9 @@
 import React from "react"
-import Image from "next/image"
 import Link from "next/link"
 import {
-  IconBrandGithub,
   IconMail,
   IconPhone,
   IconBrandLinkedin,
-  IconBrandTwitter,
   IconBrandInstagram,
   IconGlobe,
 } from "@tabler/icons-react"
