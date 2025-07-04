@@ -89,7 +89,7 @@ export default function Hero() {
         <div className="absolute top-0 right-1/4 w-px h-full bg-gradient-to-b from-transparent via-gray-300/40 to-transparent hidden md:block" />
         
         <div className="relative">
-          <h2 className="font-black text-4xl sm:text-6xl md:text-8xl lg:text-9xl xl:text-[180px] leading-none text-left tracking-tighter">
+          <h2 className="font-black text-4xl sm:text-6xl md:text-8xl lg:text-9xl leading-none text-left tracking-tighter">
             PORTFOLIO
           </h2>
         </div>
@@ -97,7 +97,7 @@ export default function Hero() {
         <div className="space-y-6 text-center md:text-left relative">
           <div className="w-12 h-0.5 bg-gradient-to-r from-primary/75 to-primary/20 mx-auto md:mx-0 mb-6" />
           
-          <div className="space-y-3">
+          <div className="space-y-3 max-w-md">
             <h2 className="text-3xl font-bold tracking-tight hover:tracking-wide transition-all duration-300">
               Rahat Sunil
             </h2>
