@@ -5,9 +5,10 @@ import { ObjectId } from "mongodb"
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const token = req.cookies.get("admin-token")?.value
     if (!token || !verifyToken(token)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -21,7 +22,7 @@ export async function PATCH(
     const updatedContact = await db
       .collection("contacts")
       .findOneAndUpdate(
-        { _id: new ObjectId(params.id) },
+        { _id: new ObjectId(id) },
         { $set: { read } },
         { returnDocument: "after" }
       )
@@ -34,9 +35,10 @@ export async function PATCH(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const token = req.cookies.get("admin-token")?.value
     if (!token || !verifyToken(token)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -45,7 +47,7 @@ export async function DELETE(
     const client = await clientPromise
     const db = client.db("portfolio")
 
-    await db.collection("contacts").deleteOne({ _id: new ObjectId(params.id) })
+    await db.collection("contacts").deleteOne({ _id: new ObjectId(id) })
 
     return NextResponse.json({ success: true })
   } catch (error) {

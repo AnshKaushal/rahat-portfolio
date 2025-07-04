@@ -4,12 +4,6 @@ import { getBlogsByCategory, getAllBlogs, Blog } from "@/lib/blog"
 import { Metadata } from "next"
 import { notFound } from "next/navigation"
 
-interface CategoryPageProps {
-  params: {
-    category: string
-  }
-}
-
 export async function generateStaticParams() {
   const blogs = await getAllBlogs()
   const categories = [
@@ -23,8 +17,10 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({
   params,
-}: CategoryPageProps): Promise<Metadata> {
-  const category = decodeURIComponent(params.category)
+}: {
+  params: Promise<{ category: string }>
+}): Promise<Metadata> {
+  const { category } = await params
   const blogs = await getBlogsByCategory(category)
 
   if (blogs.length === 0) {
@@ -41,8 +37,12 @@ export async function generateMetadata({
   }
 }
 
-export default async function CategoryPage({ params }: CategoryPageProps) {
-  const category = decodeURIComponent(params.category)
+export default async function CategoryPage({
+  params,
+}: {
+  params: Promise<{ category: string }>
+}) {
+  const { category } = await params
   const blogs = await getBlogsByCategory(category)
   const allBlogs = await getAllBlogs()
   const allCategories = [...new Set(allBlogs.map((blog) => blog.category))]

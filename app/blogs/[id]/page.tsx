@@ -4,16 +4,13 @@ import { notFound } from "next/navigation"
 import { getBlogById, getRecentBlogs } from "@/lib/blog"
 import { Metadata } from "next"
 
-interface BlogPageProps {
-  params: {
-    id: string
-  }
-}
-
 export async function generateMetadata({
   params,
-}: BlogPageProps): Promise<Metadata> {
-  const blog = await getBlogById(params.id)
+}: {
+  params: Promise<{ id: string }>
+}): Promise<Metadata> {
+  const { id } = await params
+  const blog = await getBlogById(id)
 
   if (!blog) {
     return {
@@ -42,9 +39,14 @@ export async function generateMetadata({
   }
 }
 
-export default async function BlogPage({ params }: BlogPageProps) {
+export default async function BlogPage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params
   const [blog, recentBlogs] = await Promise.all([
-    getBlogById(params.id),
+    getBlogById(id),
     getRecentBlogs(3),
   ])
 

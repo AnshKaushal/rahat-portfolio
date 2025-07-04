@@ -1,8 +1,18 @@
 "use client"
 import { Button } from "@/components/ui/button"
-import { IconLoader } from "@tabler/icons-react"
+import {
+  IconLoader,
+  IconLogout,
+  IconDashboard,
+  IconFileText,
+  IconMail,
+  IconMenu2,
+  IconX,
+} from "@tabler/icons-react"
 import { useState, useEffect } from "react"
-import { toast, Toaster } from "sonner"
+import { usePathname, useRouter } from "next/navigation"
+import { toast } from "sonner"
+import Link from "next/link"
 
 export default function AdminLayout({
   children,
@@ -14,6 +24,10 @@ export default function AdminLayout({
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isLoggingIn, setIsLoggingIn] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  const pathname = usePathname()
+  const router = useRouter()
 
   useEffect(() => {
     checkAuth()
@@ -65,6 +79,7 @@ export default function AdminLayout({
       setIsAuthenticated(false)
       setEmail("")
       setPassword("")
+      router.push("/admin")
       toast.success("Logged out successfully")
     } catch (error) {
       toast.error("Logout failed")
@@ -73,8 +88,11 @@ export default function AdminLayout({
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <IconLoader className="w-8 h-8 animate-spin text-primary" />
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <IconLoader className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-gray-600">Loading...</p>
+        </div>
       </div>
     )
   }
@@ -82,33 +100,55 @@ export default function AdminLayout({
   if (!isAuthenticated) {
     return (
       <>
-        <Toaster />
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-            <h1 className="text-2xl font-bold mb-6 text-center">Admin Login</h1>
+        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+          <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
+            <div className="text-center mb-8">
+              <h1 className="text-2xl font-bold text-gray-900">Admin Login</h1>
+              <p className="text-gray-600 mt-2">Access your admin dashboard</p>
+            </div>
+
             <form onSubmit={handleLogin} className="space-y-4">
-              <input
-                type="email"
-                placeholder="Enter admin email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                required
-              />
-              <input
-                type="password"
-                placeholder="Enter admin password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                required
-              />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  placeholder="Enter admin email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  placeholder="Enter admin password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                  required
+                />
+              </div>
+
               <button
                 type="submit"
                 disabled={isLoggingIn}
-                className="w-full bg-primary text-white p-3 rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
+                className="w-full bg-primary text-white p-3 rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
               >
-                {isLoggingIn ? "Logging in..." : "Login"}
+                {isLoggingIn ? (
+                  <span className="flex items-center justify-center">
+                    <IconLoader className="w-4 h-4 animate-spin mr-2" />
+                    Logging in...
+                  </span>
+                ) : (
+                  "Login"
+                )}
               </button>
             </form>
           </div>
@@ -117,14 +157,143 @@ export default function AdminLayout({
     )
   }
 
+  const adminNavLinks = [
+    { href: "/admin", label: "Dashboard", icon: IconDashboard },
+    { href: "/admin/blogs", label: "Blogs", icon: IconFileText },
+    { href: "/admin/contacts", label: "Contacts", icon: IconMail },
+  ]
+
   return (
     <>
-      <Toaster />
       <div className="min-h-screen pt-16">
+        <nav className="bg-white shadow-sm border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between h-16">
+              {/* Logo and Desktop Navigation */}
+              <div className="flex items-center">
+                <Link href="/admin" className="flex items-center space-x-3">
+                  <span className="text-xl font-bold text-gray-900">
+                    Admin Panel
+                  </span>
+                </Link>
+
+                {/* Desktop Navigation Links */}
+                <div className="hidden md:flex ml-10 space-x-8">
+                  {adminNavLinks.map((link) => {
+                    const Icon = link.icon
+                    const isActive = pathname === link.href
+                    return (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className={`inline-flex items-center px-1 pt-1 text-sm font-medium border-b-2 transition-colors ${
+                          isActive
+                            ? "border-primary text-primary"
+                            : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                        }`}
+                      >
+                        <Icon className="w-4 h-4 mr-2" />
+                        {link.label}
+                      </Link>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Desktop Actions */}
+              <div className="hidden md:flex items-center space-x-4">
+                <Link
+                  href="/"
+                  className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                >
+                  View Site
+                </Link>
+                <Button
+                  onClick={handleLogout}
+                  variant="outline"
+                  className="inline-flex items-center space-x-2"
+                >
+                  <IconLogout className="w-4 h-4" />
+                  <span>Logout</span>
+                </Button>
+              </div>
+
+              {/* Mobile menu button */}
+              <div className="md:hidden flex items-center">
+                <button
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                  className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 transition-colors"
+                >
+                  {isMobileMenuOpen ? (
+                    <IconX className="w-6 h-6" />
+                  ) : (
+                    <IconMenu2 className="w-6 h-6" />
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile Navigation Menu */}
+          {isMobileMenuOpen && (
+            <div className="md:hidden border-t border-gray-200">
+              <div className="pt-2 pb-3 space-y-1">
+                {adminNavLinks.map((link) => {
+                  const Icon = link.icon
+                  const isActive = pathname === link.href
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`flex items-center px-3 py-2 text-base font-medium transition-colors ${
+                        isActive
+                          ? "bg-primary/10 border-r-4 border-primary text-primary"
+                          : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                      }`}
+                    >
+                      <Icon className="w-5 h-5 mr-3" />
+                      {link.label}
+                    </Link>
+                  )
+                })}
+              </div>
+              <div className="pt-4 pb-3 border-t border-gray-200">
+                <div className="flex items-center px-4 space-x-3">
+                  <div className="flex-shrink-0">
+                    <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+                      <span className="text-white font-medium">A</span>
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-base font-medium text-gray-800">
+                      Admin User
+                    </div>
+                    <div className="text-sm text-gray-500">{email}</div>
+                  </div>
+                </div>
+                <div className="mt-3 space-y-1">
+                  <Link
+                    href="/"
+                    className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-colors"
+                  >
+                    View Site
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-left px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-colors"
+                  >
+                    <IconLogout className="w-4 h-4 inline mr-2" />
+                    Logout
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </nav>
+
+        {/* Main Content */}
         <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          {window.location.pathname === "/admin" ? (
-            <Button onClick={handleLogout}>Logout</Button>
-          ) : null}
           {children}
         </main>
       </div>

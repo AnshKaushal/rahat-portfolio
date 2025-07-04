@@ -13,7 +13,7 @@ async function createAdmin() {
     const hashedPassword = await bcrypt.hash("admin123", 12)
 
     const admin = {
-      email: "admin@rahatsunil.com",
+      email: "rahatsunil05@gmail.com",
       password: hashedPassword,
       createdAt: new Date(),
     }

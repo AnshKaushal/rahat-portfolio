@@ -92,6 +92,7 @@ export default function ContactForm() {
         )
       }
     } catch (error) {
+      console.error("Error submitting contact form:", error)
       toast.error("Network error. Please try again.")
     } finally {
       setIsSubmitting(false)
