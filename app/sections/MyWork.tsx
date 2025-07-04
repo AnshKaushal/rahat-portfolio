@@ -34,7 +34,7 @@ export default function MyWork() {
 
             <div className="mt-4 md:mt-8">
               <Button asChild>
-                <Link href="/blog">View My Blogs</Link>
+                <Link href="/blogs">View My Blogs</Link>
               </Button>
             </div>
           </div>

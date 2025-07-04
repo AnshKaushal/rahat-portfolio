@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Space_Grotesk } from "next/font/google"
 import "./globals.css"
 import Navbar from "@/components/Navbar"
+import { Toaster } from "sonner"
 
 const space = Space_Grotesk({
   subsets: ["latin"],
@@ -26,6 +27,7 @@ export default function RootLayout({
       <body className={`${space.variable} antialiased h-full`}>
         <Navbar />
         {children}
+        <Toaster />
       </body>
     </html>
   )
