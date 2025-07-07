@@ -3,11 +3,48 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import Link from "next/link"
-import { IconArrowLeft } from "@tabler/icons-react"
+import {
+  IconArrowLeft,
+  IconEye,
+  IconCode,
+  IconTag,
+  IconFileText,
+  IconCategory,
+  IconEdit,
+  IconPhoto,
+} from "@tabler/icons-react"
+import FileUpload from "@/components/FileUpload"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Separator } from "@/components/ui/separator"
+import dynamic from "next/dynamic"
+
+const MDEditor = dynamic(
+  () => import("@uiw/react-md-editor").then((mod) => mod.default),
+  { ssr: false }
+)
 
 export default function CreateBlog() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isPreviewMode, setIsPreviewMode] = useState(false)
   const [formData, setFormData] = useState({
     title: "",
     excerpt: "",
@@ -53,9 +90,7 @@ export default function CreateBlog() {
   }
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setFormData({
       ...formData,
@@ -63,137 +98,346 @@ export default function CreateBlog() {
     })
   }
 
+  const handleCategoryChange = (value: string) => {
+    setFormData({ ...formData, category: value })
+  }
+
+  const tagsArray = formData.tags
+    .split(",")
+    .map((tag) => tag.trim())
+    .filter((tag) => tag)
+
   return (
-    <div className="px-4 py-6 sm:px-0">
-      <div className="md:grid md:grid-cols-3 md:gap-6">
-        <div className="md:col-span-1">
-          <div className="px-4 sm:px-0">
-            <h3 className="text-lg font-medium leading-6 inline-flex">
-              <Link href="/admin/blogs">
-                <IconArrowLeft className="w-6 h-6 text-gray-500 hover:text-gray-700 transition-colors mr-2" />
-              </Link>
+    <main>
+      <div className="mb-8">
+        <div className="flex items-center space-x-4 mb-4">
+          <Link href="/admin/blogs">
+            <Button variant="ghost" size="sm" className="pl-2">
+              <IconArrowLeft className="w-4 h-4 mr-2" />
+              Back to Blogs
+            </Button>
+          </Link>
+          <Separator orientation="vertical" className="h-6" />
+          <div className="flex items-center space-x-2">
+            <IconEdit className="w-5 h-5 text-primary" />
+            <h1 className="text-2xl font-bold text-gray-900">
               Create New Blog Post
-            </h3>
-            <p className="mt-1 text-sm text-gray-600">
-              Fill in the details to create a new blog post.
-            </p>
+            </h1>
           </div>
         </div>
-        <div className="mt-5 md:mt-0 md:col-span-2">
-          <form onSubmit={handleSubmit}>
-            <div className="shadow sm:rounded-md sm:overflow-hidden">
-              <div className="px-4 py-5 bg-white space-y-6 sm:p-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Title
-                  </label>
-                  <input
-                    type="text"
-                    name="title"
-                    required
-                    value={formData.title}
-                    onChange={handleChange}
-                    className="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2 border"
-                  />
-                </div>
+        <p className="text-gray-600">
+          Craft your next blog post with our powerful editor. Add rich content,
+          images, and organize your thoughts.
+        </p>
+      </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Excerpt
-                  </label>
-                  <textarea
-                    name="excerpt"
-                    rows={3}
-                    value={formData.excerpt}
-                    onChange={handleChange}
-                    className="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2 border"
-                    placeholder="Brief description of the blog post..."
-                  />
-                </div>
+      <form
+        onSubmit={handleSubmit}
+        className="grid grid-cols-1 lg:grid-cols-3 gap-8"
+      >
+        <div className="lg:col-span-2 space-y-8">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <IconFileText className="w-5 h-5 text-primary" />
+                <span>Basic Information</span>
+              </CardTitle>
+              <CardDescription>
+                Set up the fundamental details of your blog post
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="title" className="text-sm font-medium">
+                  Title *
+                </Label>
+                <Input
+                  id="title"
+                  name="title"
+                  required
+                  value={formData.title}
+                  onChange={handleChange}
+                  placeholder="Enter an engaging title for your blog post..."
+                  className="text-lg"
+                />
+              </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Category
-                  </label>
-                  <select
-                    name="category"
-                    required
-                    value={formData.category}
-                    onChange={handleChange}
-                    className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+              <div className="space-y-2">
+                <Label htmlFor="excerpt" className="text-sm font-medium">
+                  Excerpt
+                </Label>
+                <Textarea
+                  id="excerpt"
+                  name="excerpt"
+                  value={formData.excerpt}
+                  onChange={handleChange}
+                  placeholder="Write a compelling summary that will appear in previews and search results..."
+                  rows={3}
+                  className="resize-none"
+                />
+                <p className="text-xs text-gray-500">
+                  {formData.excerpt.length}/300 characters recommended
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Content Editor */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <IconCode className="w-5 h-5 text-primary" />
+                  <span>Content</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Button
+                    type="button"
+                    variant={isPreviewMode ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setIsPreviewMode(!isPreviewMode)}
                   >
-                    <option value="">Select a category</option>
-                    <option value="Technology">Technology</option>
-                    <option value="Design">Design</option>
-                    <option value="Business">Business</option>
-                    <option value="Personal">Personal</option>
-                    <option value="Tutorial">Tutorial</option>
-                  </select>
+                    <IconEye className="w-4 h-4 mr-2" />
+                    {isPreviewMode ? "Edit" : "Preview"}
+                  </Button>
                 </div>
+              </CardTitle>
+              <CardDescription>
+                Write your blog content using Markdown syntax for rich
+                formatting
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <MDEditor
+                  value={formData.content}
+                  onChange={(value) =>
+                    setFormData({ ...formData, content: value || "" })
+                  }
+                  preview={isPreviewMode ? "preview" : "edit"}
+                  hideToolbar={false}
+                  height={500}
+                  data-color-mode="light"
+                />
+                <p className="text-xs text-gray-500">
+                  Use Markdown syntax for formatting. You can add headings,
+                  lists, links, code blocks, and more.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Tags (comma separated)
-                  </label>
-                  <input
-                    type="text"
-                    name="tags"
-                    value={formData.tags}
-                    onChange={handleChange}
-                    className="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2 border"
-                    placeholder="react, nextjs, javascript"
-                  />
-                </div>
+        {/* Sidebar */}
+        <div className="space-y-6">
+          {/* Publish Actions */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Publish</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex space-x-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => router.push("/admin/blogs")}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={
+                    isSubmitting || !formData.title || !formData.content
+                  }
+                  className="flex-1"
+                >
+                  {isSubmitting ? "Publishing..." : "Publish"}
+                </Button>
+              </div>
+              <p className="text-xs text-gray-500 text-center">
+                Your blog post will be published immediately
+              </p>
+            </CardContent>
+          </Card>
 
+          {/* Category & Tags */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <IconCategory className="w-5 h-5 text-primary" />
+                <span>Organization</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Category *</Label>
+                <Select
+                  value={formData.category}
+                  onValueChange={handleCategoryChange}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Technology">Technology</SelectItem>
+                    <SelectItem value="Design">Design</SelectItem>
+                    <SelectItem value="Business">Business</SelectItem>
+                    <SelectItem value="Personal">Personal</SelectItem>
+                    <SelectItem value="Tutorial">Tutorial</SelectItem>
+                    <SelectItem value="Web Development">
+                      Web Development
+                    </SelectItem>
+                    <SelectItem value="Mobile Development">
+                      Mobile Development
+                    </SelectItem>
+                    <SelectItem value="UI/UX">UI/UX</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label
+                  htmlFor="tags"
+                  className="text-sm font-medium flex items-center space-x-2"
+                >
+                  <IconTag className="w-4 h-4" />
+                  <span>Tags</span>
+                </Label>
+                <Input
+                  id="tags"
+                  name="tags"
+                  value={formData.tags}
+                  onChange={handleChange}
+                  placeholder="react, nextjs, javascript, tutorial"
+                />
+                <p className="text-xs text-gray-500">
+                  Separate tags with commas
+                </p>
+                {tagsArray.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {tagsArray.map((tag, index) => (
+                      <Badge
+                        key={index}
+                        variant="secondary"
+                        className="text-xs"
+                      >
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <IconPhoto className="w-5 h-5 text-primary" />
+                <span>Featured Image</span>
+              </CardTitle>
+              <CardDescription>
+                Add a compelling image to represent your blog post
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Featured Image URL
-                  </label>
-                  <input
+                  <Label className="text-sm font-medium">Image URL</Label>
+                  <Input
                     type="url"
                     name="featuredImage"
                     value={formData.featuredImage}
                     onChange={handleChange}
-                    className="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2 border"
                     placeholder="https://example.com/image.jpg"
+                    className="mt-1"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Content
-                  </label>
-                  <textarea
-                    name="content"
-                    rows={12}
-                    required
-                    value={formData.content}
-                    onChange={handleChange}
-                    className="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2 border"
-                    placeholder="Write your blog content here... (Markdown supported)"
-                  />
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <Separator className="w-full" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-white px-2 text-gray-500">
+                      Or upload
+                    </span>
+                  </div>
                 </div>
+
+                <FileUpload
+                  onUpload={(url) =>
+                    setFormData({ ...formData, featuredImage: url })
+                  }
+                  accept="image/*"
+                  className="w-full"
+                />
               </div>
-              <div className="px-4 py-3 bg-gray-50 text-right sm:px-6 space-x-2">
-                <button
-                  type="button"
-                  onClick={() => router.push("/admin/blogs")}
-                  className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50"
-                >
-                  {isSubmitting ? "Creating..." : "Create Blog"}
-                </button>
+
+              {formData.featuredImage && (
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Preview</Label>
+                  <div className="relative group">
+                    <img
+                      src={formData.featuredImage}
+                      alt="Featured image preview"
+                      className="w-full h-32 object-cover rounded-lg border border-gray-200"
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none"
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() =>
+                        setFormData({ ...formData, featuredImage: "" })
+                      }
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Blog Stats */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Statistics</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Word count:</span>
+                <span className="font-medium">
+                  {
+                    formData.content
+                      .split(/\s+/)
+                      .filter((word) => word.length > 0).length
+                  }
+                </span>
               </div>
-            </div>
-          </form>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Character count:</span>
+                <span className="font-medium">{formData.content.length}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Reading time:</span>
+                <span className="font-medium">
+                  {Math.max(
+                    1,
+                    Math.ceil(formData.content.split(/\s+/).length / 200)
+                  )}{" "}
+                  min
+                </span>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-      </div>
-    </div>
+      </form>
+    </main>
   )
 }

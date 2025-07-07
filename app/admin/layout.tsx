@@ -13,6 +13,7 @@ import { useState, useEffect } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import { toast } from "sonner"
 import Link from "next/link"
+import { Input } from "@/components/ui/input"
 
 export default function AdminLayout({
   children,
@@ -88,10 +89,9 @@ export default function AdminLayout({
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <IconLoader className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
-          <p className="text-gray-600">Loading...</p>
+          <IconLoader className="w-8 h-8 animate-spin text-primary mx-auto" />
         </div>
       </div>
     )
@@ -100,8 +100,8 @@ export default function AdminLayout({
   if (!isAuthenticated) {
     return (
       <>
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
-          <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="bg-white border-4 border-primary/20 border-dashed md:p-8 p-5 rounded-xl shadow-lg w-full max-w-md">
             <div className="text-center mb-8">
               <h1 className="text-2xl font-bold text-gray-900">Admin Login</h1>
               <p className="text-gray-600 mt-2">Access your admin dashboard</p>
@@ -112,12 +112,11 @@ export default function AdminLayout({
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Email Address
                 </label>
-                <input
+                <Input
                   type="email"
                   placeholder="Enter admin email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                   required
                 />
               </div>
@@ -126,21 +125,16 @@ export default function AdminLayout({
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Password
                 </label>
-                <input
+                <Input
                   type="password"
                   placeholder="Enter admin password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                   required
                 />
               </div>
 
-              <button
-                type="submit"
-                disabled={isLoggingIn}
-                className="w-full bg-primary text-white p-3 rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-              >
+              <Button className="w-full" type="submit" disabled={isLoggingIn}>
                 {isLoggingIn ? (
                   <span className="flex items-center justify-center">
                     <IconLoader className="w-4 h-4 animate-spin mr-2" />
@@ -149,7 +143,7 @@ export default function AdminLayout({
                 ) : (
                   "Login"
                 )}
-              </button>
+              </Button>
             </form>
           </div>
         </div>
@@ -166,78 +160,17 @@ export default function AdminLayout({
   return (
     <>
       <div className="min-h-screen pt-16">
-        <nav className="bg-white shadow-sm border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between h-16">
-              {/* Logo and Desktop Navigation */}
-              <div className="flex items-center">
-                <Link href="/admin" className="flex items-center space-x-3">
-                  <span className="text-xl font-bold text-gray-900">
-                    Admin Panel
-                  </span>
-                </Link>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16">
+            <div className="flex items-center">
+              <Link href="/admin" className="flex items-center space-x-3">
+                <span className="text-xl font-bold text-gray-900">
+                  Admin Panel
+                </span>
+              </Link>
 
-                {/* Desktop Navigation Links */}
-                <div className="hidden md:flex ml-10 space-x-8">
-                  {adminNavLinks.map((link) => {
-                    const Icon = link.icon
-                    const isActive = pathname === link.href
-                    return (
-                      <Link
-                        key={link.href}
-                        href={link.href}
-                        className={`inline-flex items-center px-1 pt-1 text-sm font-medium border-b-2 transition-colors ${
-                          isActive
-                            ? "border-primary text-primary"
-                            : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                        }`}
-                      >
-                        <Icon className="w-4 h-4 mr-2" />
-                        {link.label}
-                      </Link>
-                    )
-                  })}
-                </div>
-              </div>
-
-              {/* Desktop Actions */}
-              <div className="hidden md:flex items-center space-x-4">
-                <Link
-                  href="/"
-                  className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                >
-                  View Site
-                </Link>
-                <Button
-                  onClick={handleLogout}
-                  variant="outline"
-                  className="inline-flex items-center space-x-2"
-                >
-                  <IconLogout className="w-4 h-4" />
-                  <span>Logout</span>
-                </Button>
-              </div>
-
-              {/* Mobile menu button */}
-              <div className="md:hidden flex items-center">
-                <button
-                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 transition-colors"
-                >
-                  {isMobileMenuOpen ? (
-                    <IconX className="w-6 h-6" />
-                  ) : (
-                    <IconMenu2 className="w-6 h-6" />
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Mobile Navigation Menu */}
-          {isMobileMenuOpen && (
-            <div className="md:hidden border-t border-gray-200">
-              <div className="pt-2 pb-3 space-y-1">
+              {/* Desktop Navigation Links */}
+              <div className="hidden md:flex ml-10 space-x-8">
                 {adminNavLinks.map((link) => {
                   const Icon = link.icon
                   const isActive = pathname === link.href
@@ -245,55 +178,113 @@ export default function AdminLayout({
                     <Link
                       key={link.href}
                       href={link.href}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={`flex items-center px-3 py-2 text-base font-medium transition-colors ${
+                      className={`inline-flex items-center px-1 pt-1 text-sm font-medium border-b-2 transition-colors ${
                         isActive
-                          ? "bg-primary/10 border-r-4 border-primary text-primary"
-                          : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                          ? "border-primary text-primary"
+                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                       }`}
                     >
-                      <Icon className="w-5 h-5 mr-3" />
+                      <Icon className="w-4 h-4 mr-2" />
                       {link.label}
                     </Link>
                   )
                 })}
               </div>
-              <div className="pt-4 pb-3 border-t border-gray-200">
-                <div className="flex items-center px-4 space-x-3">
-                  <div className="flex-shrink-0">
-                    <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-                      <span className="text-white font-medium">A</span>
-                    </div>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-base font-medium text-gray-800">
-                      Admin User
-                    </div>
-                    <div className="text-sm text-gray-500">{email}</div>
+            </div>
+
+            {/* Desktop Actions */}
+            <div className="hidden md:flex items-center space-x-4">
+              <Link
+                href="/"
+                className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              >
+                View Site
+              </Link>
+              <Button
+                onClick={handleLogout}
+                variant="outline"
+                className="inline-flex items-center space-x-2"
+              >
+                <IconLogout className="w-4 h-4" />
+                <span>Logout</span>
+              </Button>
+            </div>
+
+            {/* Mobile menu button */}
+            <div className="md:hidden flex items-center">
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 transition-colors"
+              >
+                {isMobileMenuOpen ? (
+                  <IconX className="w-6 h-6" />
+                ) : (
+                  <IconMenu2 className="w-6 h-6" />
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Navigation Menu */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden border-t border-gray-200">
+            <div className="pt-2 pb-3 space-y-1">
+              {adminNavLinks.map((link) => {
+                const Icon = link.icon
+                const isActive = pathname === link.href
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`flex items-center px-3 py-2 text-base font-medium transition-colors ${
+                      isActive
+                        ? "bg-primary/10 border-r-4 border-primary text-primary"
+                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                    }`}
+                  >
+                    <Icon className="w-5 h-5 mr-3" />
+                    {link.label}
+                  </Link>
+                )
+              })}
+            </div>
+            <div className="pt-4 pb-3 border-t border-gray-200">
+              <div className="flex items-center px-4 space-x-3">
+                <div className="flex-shrink-0">
+                  <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+                    <span className="text-white font-medium">A</span>
                   </div>
                 </div>
-                <div className="mt-3 space-y-1">
-                  <Link
-                    href="/"
-                    className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-colors"
-                  >
-                    View Site
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-colors"
-                  >
-                    <IconLogout className="w-4 h-4 inline mr-2" />
-                    Logout
-                  </button>
+                <div className="flex-1 min-w-0">
+                  <div className="text-base font-medium text-gray-800">
+                    Admin User
+                  </div>
+                  <div className="text-sm text-gray-500">{email}</div>
                 </div>
               </div>
+              <div className="mt-3 space-y-1">
+                <Link
+                  href="/"
+                  className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-colors"
+                >
+                  View Site
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="block w-full text-left px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-colors"
+                >
+                  <IconLogout className="w-4 h-4 inline mr-2" />
+                  Logout
+                </button>
+              </div>
             </div>
-          )}
-        </nav>
+          </div>
+        )}
 
         {/* Main Content */}
-        <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
           {children}
         </main>
       </div>

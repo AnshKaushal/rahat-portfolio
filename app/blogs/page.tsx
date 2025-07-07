@@ -11,7 +11,6 @@ export const metadata: Metadata = {
 
 export default async function BlogsPage() {
   const blogs = await getAllBlogs()
-
   const categories = [...new Set(blogs.map((blog) => blog.category))]
 
   return (
@@ -61,7 +60,7 @@ export default async function BlogsPage() {
           </div>
         ) : (
           <>
-            {blogs.length > 0 && (
+            {blogs && blogs.length > 0 && (
               <div className="mb-16">
                 <h2 className="text-2xl font-bold text-gray-900 mb-8">
                   Featured Post
