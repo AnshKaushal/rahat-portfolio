@@ -126,9 +126,7 @@ export default function ContactForm() {
           Let's Start a Conversation
         </h3>
         <p className="text-gray-600">
-          Have a project in mind or just want to chat? I'd love to hear from
-          you. Fill out the form below and I'll get back to you as soon as
-          possible.
+          Have a project in mind or interested in connecting? I’d be glad to hear from you. Just fill out the form below, and I’ll get back to you at the earliest opportunity. Looking forward to the conversation.
         </p>
       </div>
 

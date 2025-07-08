@@ -18,9 +18,7 @@ export default function ContactMe() {
             Let's Work Together
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Ready to bring your ideas to life? I'm here to help you create
-            something amazing. Whether it's a new project, collaboration, or
-            just a friendly chat about design and technology.
+            Ready to bring your ideas to life? I'm here to help transform your vision into something exceptional. Whether you're exploring a new project, considering a collaboration, or simply want to discuss design and technology, I’d be glad to connect.
           </p>
         </div>
 
@@ -29,9 +27,7 @@ export default function ContactMe() {
             <div>
               <h3 className="text-2xl font-bold mb-6">Get in Touch</h3>
               <p className="text-gray-600 text-lg mb-8">
-                I'm always excited to take on new challenges and collaborate
-                with passionate people. Let's discuss how we can work together
-                to achieve your goals.
+                I’m always excited to take on meaningful challenges and collaborate with passionate, purpose-driven people. Let’s connect and see how we can create impact together.
               </p>
             </div>
 
