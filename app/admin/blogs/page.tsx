@@ -146,7 +146,7 @@ export default function BlogsPage() {
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div className="flex items-center justify-end space-x-2">
                           <Link
-                            href={`/blogs/${blog._id}`}
+                            href={`/blogs/${blog.slug}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-blue-600 hover:text-blue-800 p-1 rounded hover:bg-blue-50"
@@ -155,14 +155,14 @@ export default function BlogsPage() {
                             <IconEye className="w-4 h-4" />
                           </Link>
                           <Link
-                            href={`/admin/blogs/edit/${blog._id}`}
+                            href={`/admin/blogs/edit/${blog.slug}`}
                             className="text-primary hover:text-primary/80 p-1 rounded hover:bg-primary/10"
                             title="Edit blog"
                           >
                             <IconEdit className="w-4 h-4" />
                           </Link>
                           <button
-                            onClick={() => deleteBlog(blog._id)}
+                            onClick={() => deleteBlog(blog.slug)}
                             className="text-red-600 hover:text-red-800 p-1 rounded hover:bg-red-50"
                             title="Delete blog"
                           >

@@ -1,16 +1,17 @@
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { getBlogById, getRecentBlogs } from "@/lib/blog"
+import { getBlogBySlug, getRecentBlogs } from "@/lib/blog"
 import { Metadata } from "next"
+import Reactmarkdown from "react-markdown"
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ slug: string }>
 }): Promise<Metadata> {
-  const { id } = await params
-  const blog = await getBlogById(id)
+  const { slug } = await params
+  const blog = await getBlogBySlug(slug)
 
   if (!blog) {
     return {
@@ -42,11 +43,11 @@ export async function generateMetadata({
 export default async function BlogPage({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ slug: string }>
 }) {
-  const { id } = await params
+  const { slug } = await params
   const [blog, recentBlogs] = await Promise.all([
-    getBlogById(id),
+    getBlogBySlug(slug),
     getRecentBlogs(3),
   ])
 
@@ -55,7 +56,7 @@ export default async function BlogPage({
   }
 
   const otherBlogs = recentBlogs.filter(
-    (recentBlog) => recentBlog._id !== blog._id
+    (recentBlog) => recentBlog.slug !== blog.slug
   )
 
   return (
@@ -149,9 +150,10 @@ export default async function BlogPage({
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
           <article className="lg:col-span-3">
-            <div className="prose prose-lg prose-gray max-w-none prose-headings:font-bold prose-headings:text-gray-900 prose-p:text-gray-700 prose-p:leading-relaxed prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-strong:text-gray-900 prose-code:text-primary prose-code:bg-gray-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-pre:bg-gray-900 prose-pre:text-gray-100">
-              <BlogContent content={blog.content} />
-            </div>
+            <div
+              className="prose md:prose-lg max-w-none"
+              dangerouslySetInnerHTML={{ __html: blog.content }}
+            ></div>
 
             <div className="mt-12 pt-8 border-t border-gray-200">
               <div className="flex items-center space-x-4">
@@ -245,52 +247,6 @@ export default async function BlogPage({
       </div>
     </div>
   )
-}
-
-function BlogContent({ content }: { content: string }) {
-  const formattedContent = content.split("\n\n").map((paragraph, index) => {
-    if (paragraph.startsWith("# ")) {
-      return (
-        <h1 key={index} className="text-3xl font-bold mt-8 mb-4">
-          {paragraph.slice(2)}
-        </h1>
-      )
-    }
-    if (paragraph.startsWith("## ")) {
-      return (
-        <h2 key={index} className="text-2xl font-bold mt-6 mb-3">
-          {paragraph.slice(3)}
-        </h2>
-      )
-    }
-    if (paragraph.startsWith("### ")) {
-      return (
-        <h3 key={index} className="text-xl font-bold mt-4 mb-2">
-          {paragraph.slice(4)}
-        </h3>
-      )
-    }
-    if (paragraph.startsWith("- ") || paragraph.startsWith("* ")) {
-      const items = paragraph
-        .split("\n")
-        .filter((item) => item.startsWith("- ") || item.startsWith("* "))
-      return (
-        <ul key={index} className="list-disc list-inside space-y-2 my-4">
-          {items.map((item, itemIndex) => (
-            <li key={itemIndex}>{item.slice(2)}</li>
-          ))}
-        </ul>
-      )
-    }
-    if (paragraph.trim() === "") return null
-    return (
-      <p key={index} className="mb-4">
-        {paragraph}
-      </p>
-    )
-  })
-
-  return <div>{formattedContent}</div>
 }
 
 function TableOfContents({ content }: { content: string }) {

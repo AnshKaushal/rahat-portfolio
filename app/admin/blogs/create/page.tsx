@@ -5,8 +5,6 @@ import { toast } from "sonner"
 import Link from "next/link"
 import {
   IconArrowLeft,
-  IconEye,
-  IconCode,
   IconTag,
   IconFileText,
   IconCategory,
@@ -34,17 +32,11 @@ import {
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import dynamic from "next/dynamic"
-
-const MDEditor = dynamic(
-  () => import("@uiw/react-md-editor").then((mod) => mod.default),
-  { ssr: false }
-)
+import Editor from "@/components/Editor"
 
 export default function CreateBlog() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isPreviewMode, setIsPreviewMode] = useState(false)
   const [formData, setFormData] = useState({
     title: "",
     excerpt: "",
@@ -102,6 +94,15 @@ export default function CreateBlog() {
     setFormData({ ...formData, category: value })
   }
 
+  const getWordCount = () => {
+    const textContent = formData.content.replace(/<[^>]*>/g, "")
+    return textContent.split(/\s+/).filter((word) => word.length > 0).length
+  }
+
+  const getCharCount = () => {
+    return formData.content.replace(/<[^>]*>/g, "").length
+  }
+
   const tagsArray = formData.tags
     .split(",")
     .map((tag) => tag.trim())
@@ -126,16 +127,15 @@ export default function CreateBlog() {
           </div>
         </div>
         <p className="text-gray-600">
-          Craft your next blog post with our powerful editor. Add rich content,
-          images, and organize your thoughts.
+          Craft your next blog post with our powerful editor.
         </p>
       </div>
 
       <form
         onSubmit={handleSubmit}
-        className="grid grid-cols-1 lg:grid-cols-3 gap-8"
+        className="grid grid-cols-1 xl:grid-cols-4 gap-8"
       >
-        <div className="lg:col-span-2 space-y-8">
+        <div className="xl:col-span-3 space-y-8">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
@@ -182,77 +182,49 @@ export default function CreateBlog() {
             </CardContent>
           </Card>
 
-          {/* Content Editor */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <IconCode className="w-5 h-5 text-primary" />
-                  <span>Content</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Button
-                    type="button"
-                    variant={isPreviewMode ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setIsPreviewMode(!isPreviewMode)}
-                  >
-                    <IconEye className="w-4 h-4 mr-2" />
-                    {isPreviewMode ? "Edit" : "Preview"}
-                  </Button>
-                </div>
+              <CardTitle className="flex items-center space-x-2">
+                <IconEdit className="w-5 h-5 text-primary" />
+                <span>Content Editor</span>
               </CardTitle>
               <CardDescription>
-                Write your blog content using Markdown syntax for rich
-                formatting
+                Write your content using our rich text editor. Click the image
+                button to upload images at cursor position.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <MDEditor
-                  value={formData.content}
-                  onChange={(value) =>
-                    setFormData({ ...formData, content: value || "" })
-                  }
-                  preview={isPreviewMode ? "preview" : "edit"}
-                  hideToolbar={false}
-                  height={500}
-                  data-color-mode="light"
-                />
-                <p className="text-xs text-gray-500">
-                  Use Markdown syntax for formatting. You can add headings,
-                  lists, links, code blocks, and more.
-                </p>
-              </div>
+              <Editor
+                content={formData.content}
+                onChange={(content) => setFormData({ ...formData, content })}
+              />
             </CardContent>
           </Card>
         </div>
 
-        {/* Sidebar */}
         <div className="space-y-6">
-          {/* Publish Actions */}
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">Publish</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex space-x-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => router.push("/admin/blogs")}
-                  className="flex-1"
-                >
-                  Cancel
-                </Button>
+              <div className="flex flex-col space-y-2">
                 <Button
                   type="submit"
                   disabled={
                     isSubmitting || !formData.title || !formData.content
                   }
-                  className="flex-1"
+                  className="w-full"
                 >
                   {isSubmitting ? "Publishing..." : "Publish"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => router.push("/admin/blogs")}
+                  className="w-full"
+                >
+                  Cancel
                 </Button>
               </div>
               <p className="text-xs text-gray-500 text-center">
@@ -261,7 +233,6 @@ export default function CreateBlog() {
             </CardContent>
           </Card>
 
-          {/* Category & Tags */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
@@ -309,7 +280,7 @@ export default function CreateBlog() {
                   name="tags"
                   value={formData.tags}
                   onChange={handleChange}
-                  placeholder="react, nextjs, javascript, tutorial"
+                  placeholder="react, nextjs, javascript"
                 />
                 <p className="text-xs text-gray-500">
                   Separate tags with commas
@@ -337,23 +308,16 @@ export default function CreateBlog() {
                 <IconPhoto className="w-5 h-5 text-primary" />
                 <span>Featured Image</span>
               </CardTitle>
-              <CardDescription>
-                Add a compelling image to represent your blog post
-              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-3">
-                <div>
-                  <Label className="text-sm font-medium">Image URL</Label>
-                  <Input
-                    type="url"
-                    name="featuredImage"
-                    value={formData.featuredImage}
-                    onChange={handleChange}
-                    placeholder="https://example.com/image.jpg"
-                    className="mt-1"
-                  />
-                </div>
+                <Input
+                  type="url"
+                  name="featuredImage"
+                  value={formData.featuredImage}
+                  onChange={handleChange}
+                  placeholder="https://example.com/image.jpg"
+                />
 
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
@@ -377,15 +341,11 @@ export default function CreateBlog() {
 
               {formData.featuredImage && (
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium">Preview</Label>
                   <div className="relative group">
                     <img
                       src={formData.featuredImage}
                       alt="Featured image preview"
                       className="w-full h-32 object-cover rounded-lg border border-gray-200"
-                      onError={(e) => {
-                        e.currentTarget.style.display = "none"
-                      }}
                     />
                     <Button
                       type="button"
@@ -404,34 +364,23 @@ export default function CreateBlog() {
             </CardContent>
           </Card>
 
-          {/* Blog Stats */}
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">Statistics</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Word count:</span>
-                <span className="font-medium">
-                  {
-                    formData.content
-                      .split(/\s+/)
-                      .filter((word) => word.length > 0).length
-                  }
-                </span>
+                <span className="text-gray-600">Words:</span>
+                <span className="font-medium">{getWordCount()}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Character count:</span>
-                <span className="font-medium">{formData.content.length}</span>
+                <span className="text-gray-600">Characters:</span>
+                <span className="font-medium">{getCharCount()}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Reading time:</span>
+                <span className="text-gray-600">Read time:</span>
                 <span className="font-medium">
-                  {Math.max(
-                    1,
-                    Math.ceil(formData.content.split(/\s+/).length / 200)
-                  )}{" "}
-                  min
+                  {Math.max(1, Math.ceil(getWordCount() / 200))} min
                 </span>
               </div>
             </CardContent>

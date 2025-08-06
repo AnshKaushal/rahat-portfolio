@@ -1,21 +1,26 @@
 import { NextRequest, NextResponse } from "next/server"
 import clientPromise from "@/lib/mongodb"
 import { verifyToken } from "@/lib/auth"
-import { ObjectId } from "mongodb"
+import slugify from "slugify"
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { id } = await params
+    const { slug } = await params
     const client = await clientPromise
     const db = client.db("portfolio")
 
-    const blog = await db.collection("blogs").findOne({ _id: new ObjectId(id) })
+    const res = await db.collection("blogs").findOne({ slug })
 
-    if (!blog) {
+    if (!res) {
       return NextResponse.json({ error: "Blog not found" }, { status: 404 })
+    }
+
+    const blog = {
+      ...res,
+      _id: res._id.toString(),
     }
 
     return NextResponse.json(blog)
@@ -27,10 +32,10 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { id } = await params
+    const { slug } = await params
     const token = req.cookies.get("admin-token")?.value
     if (!token || !verifyToken(token)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -42,10 +47,13 @@ export async function PUT(
     const db = client.db("portfolio")
 
     const updatedBlog = await db.collection("blogs").findOneAndUpdate(
-      { _id: new ObjectId(id) },
+      { slug },
       {
         $set: {
           ...blogData,
+          slug: blogData.title
+            ? slugify(blogData.title, { lower: true, strict: true })
+            : undefined,
           updatedAt: new Date(),
         },
       },
@@ -56,7 +64,10 @@ export async function PUT(
       return NextResponse.json({ error: "Blog not found" }, { status: 404 })
     }
 
-    return NextResponse.json(updatedBlog)
+    return NextResponse.json({
+      ...updatedBlog.value,
+      _id: updatedBlog.value._id.toString(),
+    })
   } catch (error) {
     console.error("Error updating blog:", error)
     return NextResponse.json({ error: "Server error" }, { status: 500 })
@@ -65,10 +76,10 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { id } = await params
+    const { slug } = await params
     const token = req.cookies.get("admin-token")?.value
     if (!token || !verifyToken(token)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -77,9 +88,7 @@ export async function DELETE(
     const client = await clientPromise
     const db = client.db("portfolio")
 
-    const result = await db
-      .collection("blogs")
-      .deleteOne({ _id: new ObjectId(id) })
+    const result = await db.collection("blogs").deleteOne({ slug })
 
     if (result.deletedCount === 0) {
       return NextResponse.json({ error: "Blog not found" }, { status: 404 })

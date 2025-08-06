@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import clientPromise from "@/lib/mongodb"
 import { verifyToken } from "@/lib/auth"
-import { ObjectId } from "mongodb"
+import slugify from "slugify"
 
 export async function GET() {
   try {
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
 
     const blog = {
       ...blogData,
-      _id: new ObjectId(),
+      slug: slugify(blogData.title, { lower: true, strict: true }),
       createdAt: new Date(),
       updatedAt: new Date(),
     }

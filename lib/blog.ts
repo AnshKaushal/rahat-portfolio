@@ -1,11 +1,11 @@
 import clientPromise from "./mongodb"
-import { ObjectId } from "mongodb"
 
 export interface Blog {
   _id: string
   title: string
   excerpt: string
   content: string
+  slug: string
   category: string
   tags: string[]
   featuredImage?: string
@@ -34,12 +34,12 @@ export async function getAllBlogs(): Promise<Blog[]> {
   }
 }
 
-export async function getBlogById(id: string): Promise<Blog | null> {
+export async function getBlogBySlug(slug: string): Promise<Blog | null> {
   try {
     const client = await clientPromise
     const db = client.db("portfolio")
 
-    const blog = await db.collection("blogs").findOne({ _id: new ObjectId(id) })
+    const blog = await db.collection("blogs").findOne({ slug })
 
     if (!blog) return null
 

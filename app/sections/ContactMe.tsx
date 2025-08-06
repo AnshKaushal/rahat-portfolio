@@ -1,12 +1,10 @@
 import ContactForm from "@/components/ContactForm"
-import { Button } from "@/components/ui/button"
 import {
   IconMail,
   IconPhone,
-  IconBrandInstagram,
   IconWorld,
-  IconBrandLinkedin,
 } from "@tabler/icons-react"
+import Image from "next/image"
 import Link from "next/link"
 
 export default function ContactMe() {
@@ -18,7 +16,10 @@ export default function ContactMe() {
             Let's Work Together
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Ready to bring your ideas to life? I'm here to help transform your vision into something exceptional. Whether you're exploring a new project, considering a collaboration, or simply want to discuss design and technology, I’d be glad to connect.
+            Ready to bring your ideas to life? I'm here to help transform your
+            vision into something exceptional. Whether you're exploring a new
+            project, considering a collaboration, or simply want to discuss
+            design and technology, I’d be glad to connect.
           </p>
         </div>
 
@@ -27,7 +28,9 @@ export default function ContactMe() {
             <div>
               <h3 className="text-2xl font-bold mb-6">Get in Touch</h3>
               <p className="text-gray-600 text-lg mb-8">
-                I’m always excited to take on meaningful challenges and collaborate with passionate, purpose-driven people. Let’s connect and see how we can create impact together.
+                I’m always excited to take on meaningful challenges and
+                collaborate with passionate, purpose-driven people. Let’s
+                connect and see how we can create impact together.
               </p>
             </div>
 
@@ -84,23 +87,30 @@ export default function ContactMe() {
                 Connect with me
               </h4>
               <div className="flex space-x-4">
-                <Button variant="outline" asChild>
-                  <Link
-                    href="https://linkedin.com/in/rahatsunil"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <IconBrandLinkedin className="w-5 h-5" />
-                  </Link>
-                </Button>
-                <a
+                <Link
+                  href="https://linkedin.com/in/rahatsunil"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Image
+                    src="/company-logos/linkedin.svg"
+                    alt="LinkedIn"
+                    width={32}
+                    height={32}
+                  />
+                </Link>
+                <Link
                   href="https://instagram.com/rahxt_"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-200 group"
                 >
-                  <IconBrandInstagram className="w-5 h-5" />
-                </a>
+                  <Image
+                    src="/company-logos/instagram.svg"
+                    alt="Instagram"
+                    width={32}
+                    height={32}
+                  />
+                </Link>
               </div>
             </div>
           </div>
