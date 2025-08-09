@@ -1,4 +1,5 @@
 "use client"
+
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import {
@@ -11,9 +12,18 @@ import {
 } from "@tabler/icons-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 
 export default function BlogsPage() {
-  const [blogs, setBlogs] = useState([])
+  const [blogs, setBlogs] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -41,7 +51,7 @@ export default function BlogsPage() {
       })
 
       if (response.ok) {
-        setBlogs(blogs.filter((blog: any) => blog._id !== id))
+        setBlogs(blogs.filter((blog) => blog._id !== id))
         toast.success("Blog deleted successfully")
       } else {
         toast.error("Failed to delete blog")
@@ -60,140 +70,92 @@ export default function BlogsPage() {
   }
 
   return (
-    <div className="px-4 py-6 sm:px-0">
-      <div className="sm:flex sm:items-center">
-        <div className="sm:flex-auto">
-          <div>
-            <h1 className="text-xl font-semibold text-gray-900 inline-flex items-center">
-              <Link href="/admin">
-                <IconArrowLeft className="w-6 h-6 text-gray-700 hover:text-gray-700 transition-colors mr-2" />
-              </Link>
-              Blog Posts
-            </h1>
-            <p className="mt-2 text-sm text-gray-700">
-              Manage your blog posts here. You can create, edit, delete, and
-              preview your blog posts.
-            </p>
-          </div>
-        </div>
-        <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-          <Button asChild>
-            <Link href="/admin/blogs/create">
-              <IconPlus className="w-4 h-4" />
-              Add Blog
+    <div className="px-4 py-6 sm:px-0 space-y-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold flex items-center">
+            <Link href="/admin" className="mr-2">
+              <IconArrowLeft className="w-6 h-6 text-gray-600 hover:text-gray-800" />
             </Link>
-          </Button>
+            Blog Posts
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Manage your blog posts here. You can create, edit, delete, and
+            preview your posts.
+          </p>
         </div>
+        <Button asChild>
+          <Link href="/admin/blogs/create">
+            <IconPlus className="w-4 h-4" />
+            Add Blog
+          </Link>
+        </Button>
       </div>
 
-      <div className="mt-8 flex flex-col border-4 border-dashed rounded-lg border-primary/20">
-        <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-            <div className="overflow-hidden md:rounded-lg">
-              <table className="min-w-full divide-y divide-gray-300">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Title
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Category
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Created
-                    </th>
-                    <th className="relative px-6 py-3">
-                      <span className="sr-only">Actions</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {blogs.map((blog: any) => (
-                    <tr key={blog._id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4">
-                        <div className="max-w-xs">
-                          <div className="text-sm font-medium text-gray-900 truncate">
-                            {blog.title}
-                          </div>
-                          {blog.excerpt && (
-                            <div className="text-sm text-gray-500 truncate">
-                              {blog.excerpt}
-                            </div>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                          {blog.category}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                          Published
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <div>
-                          {new Date(blog.createdAt).toLocaleDateString()}
-                        </div>
-                        <div className="text-xs text-gray-400">
-                          {new Date(blog.createdAt).toLocaleTimeString()}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex items-center justify-end space-x-2">
-                          <Link
-                            href={`/blogs/${blog.slug}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 hover:text-blue-800 p-1 rounded hover:bg-blue-50"
-                            title="Preview blog"
-                          >
-                            <IconEye className="w-4 h-4" />
-                          </Link>
-                          <Link
-                            href={`/admin/blogs/edit/${blog.slug}`}
-                            className="text-primary hover:text-primary/80 p-1 rounded hover:bg-primary/10"
-                            title="Edit blog"
-                          >
-                            <IconEdit className="w-4 h-4" />
-                          </Link>
-                          <button
-                            onClick={() => deleteBlog(blog.slug)}
-                            className="text-red-600 hover:text-red-800 p-1 rounded hover:bg-red-50"
-                            title="Delete blog"
-                          >
-                            <IconTrash className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              {blogs.length === 0 && (
-                <div className="text-center py-12">
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    No blogs yet
-                  </h3>
-                  <p className="text-gray-500 mb-4">
-                    Get started by creating your first blog post.
+      {blogs.length > 0 ? (
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {blogs.map((blog) => (
+            <Card
+              key={blog._id}
+              className="flex flex-col justify-between hover:shadow-lg transition"
+            >
+              <CardHeader>
+                <CardTitle className="truncate">{blog.title}</CardTitle>
+                <CardDescription className="line-clamp-2">
+                  {blog.excerpt || "No description provided"}
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent className="flex flex-col gap-3">
+                <Badge variant="secondary" className="w-fit">
+                  {blog.category || "Uncategorized"}
+                </Badge>
+                <div>
+                  <p className="text-xs text-muted-foreground">
+                    {new Date(blog.createdAt).toLocaleDateString()} •{" "}
+                    {new Date(blog.createdAt).toLocaleTimeString()}
                   </p>
-                  <Button asChild>
-                    <Link href="/admin/blogs/create">
-                      <IconPlus className="w-4 h-4" />
-                      Create your first blog
+                </div>
+              </CardContent>
+
+              <CardFooter className="flex justify-between">
+                <div className="flex gap-2">
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={`/blogs/${blog.slug}`} target="_blank">
+                      <IconEye className="w-4 h-4" /> View
+                    </Link>
+                  </Button>
+                  <Button asChild size="sm" variant="default">
+                    <Link href={`/admin/blogs/edit/${blog.slug}`}>
+                      <IconEdit className="w-4 h-4" /> Edit
                     </Link>
                   </Button>
                 </div>
-              )}
-            </div>
-          </div>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={() => deleteBlog(blog.slug)}
+                >
+                  <IconTrash className="w-4 h-4" /> Delete
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
         </div>
-      </div>
+      ) : (
+        <div className="text-center py-12">
+          <h3 className="text-lg font-medium">No blogs yet</h3>
+          <p className="text-muted-foreground mb-4">
+            Get started by creating your first blog post.
+          </p>
+          <Button asChild>
+            <Link href="/admin/blogs/create">
+              <IconPlus className="w-4 h-4" />
+              Create your first blog
+            </Link>
+          </Button>
+        </div>
+      )}
     </div>
   )
 }
