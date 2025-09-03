@@ -5,10 +5,12 @@ import slugify from "slugify"
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }
+  context: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { slug } = await params
+    const params = await context.params
+    const { slug } = params
+
     const client = await clientPromise
     const db = client.db("portfolio")
 
@@ -32,10 +34,12 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }
+  context: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { slug } = await params
+    const params = await context.params
+    const { slug } = params
+
     const token = req.cookies.get("admin-token")?.value
     if (!token || !verifyToken(token)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -76,10 +80,12 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }
+  context: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { slug } = await params
+    const params = await context.params
+    const { slug } = params
+
     const token = req.cookies.get("admin-token")?.value
     if (!token || !verifyToken(token)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
