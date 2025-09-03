@@ -3,7 +3,8 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getBlogBySlug, getRecentBlogs } from "@/lib/blog"
 import { Metadata } from "next"
-import Reactmarkdown from "react-markdown"
+
+export const dynamic = "force-dynamic"
 
 export async function generateMetadata({
   params,

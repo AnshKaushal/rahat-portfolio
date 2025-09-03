@@ -3,6 +3,8 @@ import Image from "next/image"
 import { Blog, getAllBlogs } from "@/lib/blog"
 import { Metadata } from "next"
 
+export const dynamic = "force-dynamic"
+
 export const metadata: Metadata = {
   title: "Blog | Rahat Sunil",
   description:
