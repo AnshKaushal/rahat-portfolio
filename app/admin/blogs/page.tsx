@@ -42,16 +42,16 @@ export default function BlogsPage() {
     }
   }
 
-  const deleteBlog = async (id: string) => {
+  const deleteBlog = async (slug: string) => {
     if (!confirm("Are you sure you want to delete this blog?")) return
 
     try {
-      const response = await fetch(`/api/blogs/${id}`, {
+      const response = await fetch(`/api/blogs/${slug}`, {
         method: "DELETE",
       })
 
       if (response.ok) {
-        setBlogs(blogs.filter((blog) => blog._id !== id))
+        setBlogs(blogs.filter((blog) => blog.slug !== slug))
         toast.success("Blog deleted successfully")
       } else {
         toast.error("Failed to delete blog")
