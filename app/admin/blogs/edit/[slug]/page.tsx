@@ -6,10 +6,10 @@ import { toast } from "sonner"
 export default function EditBlogPage({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ slug: string }>
 }) {
   const router = useRouter()
-  const { id } = use(params)
+  const { slug } = use(params)
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formData, setFormData] = useState({
@@ -23,11 +23,11 @@ export default function EditBlogPage({
 
   useEffect(() => {
     fetchBlog()
-  }, [id])
+  }, [slug])
 
   const fetchBlog = async () => {
     try {
-      const response = await fetch(`/api/blogs/${id}`)
+      const response = await fetch(`/api/blogs/${slug}`)
       if (response.ok) {
         const blog = await response.json()
         setFormData({
@@ -63,7 +63,7 @@ export default function EditBlogPage({
           .filter((tag) => tag),
       }
 
-      const response = await fetch(`/api/blogs/${id}`, {
+      const response = await fetch(`/api/blogs/${slug}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -106,7 +106,7 @@ export default function EditBlogPage({
     }
 
     try {
-      const response = await fetch(`/api/blogs/${id}`, {
+      const response = await fetch(`/api/blogs/${slug}`, {
         method: "DELETE",
       })
 
@@ -147,7 +147,7 @@ export default function EditBlogPage({
                 Preview
               </h4>
               <a
-                href={`/blogs/${id}`}
+                href={`/blogs/${slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm text-blue-600 hover:text-blue-800 underline"
@@ -347,7 +347,7 @@ You can use basic markdown formatting:
 
                 <button
                   type="button"
-                  onClick={() => window.open(`/blogs/${id}`, "_blank")}
+                  onClick={() => window.open(`/blogs/${slug}`, "_blank")}
                   className="bg-gray-600 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
                 >
                   Preview
