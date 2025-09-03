@@ -3,6 +3,9 @@ import clientPromise from "@/lib/mongodb"
 import { verifyToken } from "@/lib/auth"
 import slugify from "slugify"
 
+// Export supported HTTP methods
+export const runtime = "nodejs"
+
 export async function GET() {
   try {
     const client = await clientPromise
@@ -45,4 +48,16 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     return NextResponse.json({ error: "Server error" }, { status: 500 })
   }
+}
+
+// Handle OPTIONS requests for CORS
+export async function OPTIONS(req: NextRequest) {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    },
+  })
 }
