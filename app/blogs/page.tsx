@@ -11,7 +11,6 @@ export const metadata: Metadata = {
 
 export default async function BlogsPage() {
   const blogs = await getAllBlogs()
-  const categories = [...new Set(blogs.map((blog) => blog.category))]
 
   return (
     <div className="min-h-screen pt-16">
@@ -25,26 +24,6 @@ export default async function BlogsPage() {
               Thoughts, insights, and experiences from my journey in design,
               development, and everything in between.
             </p>
-          </div>
-
-          <div className="mt-16">
-            <div className="flex flex-wrap justify-center gap-4 mb-12">
-              <Link
-                href="/blogs"
-                className="px-4 py-2 bg-primary text-white rounded-full text-sm font-medium"
-              >
-                All Posts
-              </Link>
-              {categories.map((category) => (
-                <Link
-                  key={category}
-                  href={`/blogs/category/${category.toLowerCase()}`}
-                  className="px-4 py-2 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 rounded-full text-sm font-medium transition-colors"
-                >
-                  {category}
-                </Link>
-              ))}
-            </div>
           </div>
         </div>
       </div>
@@ -93,10 +72,6 @@ function FeaturedBlogCard({ blog }: { blog: Blog }) {
             <div className="flex items-center space-x-2 text-xs text-gray-500 mb-4">
               <span className="bg-primary/10 text-primary px-2 py-1 rounded-full font-medium">
                 Featured
-              </span>
-              <span>•</span>
-              <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-                {blog.category}
               </span>
               <span>•</span>
               <time dateTime={blog.createdAt}>
@@ -150,10 +125,6 @@ function BlogCard({ blog }: { blog: Blog }) {
         )}
         <div className="p-6 flex-1 flex flex-col">
           <div className="flex items-center space-x-2 text-xs text-gray-500 mb-3">
-            <span className="bg-primary/10 text-primary px-2 py-1 rounded-full font-medium">
-              {blog.category}
-            </span>
-            <span>•</span>
             <time dateTime={blog.createdAt}>
               {new Date(blog.createdAt).toLocaleDateString()}
             </time>

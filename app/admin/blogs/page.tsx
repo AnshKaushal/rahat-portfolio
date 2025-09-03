@@ -107,9 +107,6 @@ export default function BlogsPage() {
               </CardHeader>
 
               <CardContent className="flex flex-col gap-3">
-                <Badge variant="secondary" className="w-fit">
-                  {blog.category || "Uncategorized"}
-                </Badge>
                 <div>
                   <p className="text-xs text-muted-foreground">
                     {new Date(blog.createdAt).toLocaleDateString()} •{" "}

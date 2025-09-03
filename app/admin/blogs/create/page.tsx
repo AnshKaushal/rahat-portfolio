@@ -7,7 +7,6 @@ import {
   IconArrowLeft,
   IconTag,
   IconFileText,
-  IconCategory,
   IconEdit,
   IconPhoto,
 } from "@tabler/icons-react"
@@ -41,7 +40,6 @@ export default function CreateBlog() {
     title: "",
     excerpt: "",
     content: "",
-    category: "",
     tags: "",
     featuredImage: "",
   })
@@ -88,10 +86,6 @@ export default function CreateBlog() {
       ...formData,
       [e.target.name]: e.target.value,
     })
-  }
-
-  const handleCategoryChange = (value: string) => {
-    setFormData({ ...formData, category: value })
   }
 
   const getWordCount = () => {
@@ -236,37 +230,11 @@ export default function CreateBlog() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
-                <IconCategory className="w-5 h-5 text-primary" />
+                <IconTag className="w-5 h-5 text-primary" />
                 <span>Organization</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label className="text-sm font-medium">Category *</Label>
-                <Select
-                  value={formData.category}
-                  onValueChange={handleCategoryChange}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Technology">Technology</SelectItem>
-                    <SelectItem value="Design">Design</SelectItem>
-                    <SelectItem value="Business">Business</SelectItem>
-                    <SelectItem value="Personal">Personal</SelectItem>
-                    <SelectItem value="Tutorial">Tutorial</SelectItem>
-                    <SelectItem value="Web Development">
-                      Web Development
-                    </SelectItem>
-                    <SelectItem value="Mobile Development">
-                      Mobile Development
-                    </SelectItem>
-                    <SelectItem value="UI/UX">UI/UX</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
               <div className="space-y-2">
                 <Label
                   htmlFor="tags"

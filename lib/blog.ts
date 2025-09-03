@@ -6,7 +6,6 @@ export interface Blog {
   excerpt: string
   content: string
   slug: string
-  category: string
   tags: string[]
   featuredImage?: string
   createdAt: string
@@ -50,27 +49,6 @@ export async function getBlogBySlug(slug: string): Promise<Blog | null> {
   } catch (error) {
     console.error("Error fetching blog:", error)
     return null
-  }
-}
-
-export async function getBlogsByCategory(category: string): Promise<Blog[]> {
-  try {
-    const client = await clientPromise
-    const db = client.db("portfolio")
-
-    const blogs = await db
-      .collection("blogs")
-      .find({ category })
-      .sort({ createdAt: -1 })
-      .toArray()
-
-    return blogs.map((blog) => ({
-      ...blog,
-      _id: blog._id.toString(),
-    })) as Blog[]
-  } catch (error) {
-    console.error("Error fetching blogs by category:", error)
-    return []
   }
 }
 

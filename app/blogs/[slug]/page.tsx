@@ -85,10 +85,6 @@ export default async function BlogPage({
         {/* Blog Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center space-x-2 text-sm text-gray-500 mb-4">
-            <span className="bg-primary/10 text-primary px-3 py-1 rounded-full font-medium">
-              {blog.category}
-            </span>
-            <span>•</span>
             <time dateTime={blog.createdAt}>
               {new Date(blog.createdAt).toLocaleDateString("en-US", {
                 year: "numeric",

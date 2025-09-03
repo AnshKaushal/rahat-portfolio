@@ -16,7 +16,6 @@ export default function EditBlogPage({
     title: "",
     excerpt: "",
     content: "",
-    category: "",
     tags: "",
     featuredImage: "",
   })
@@ -34,7 +33,6 @@ export default function EditBlogPage({
           title: blog.title || "",
           excerpt: blog.excerpt || "",
           content: blog.content || "",
-          category: blog.category || "",
           tags: blog.tags ? blog.tags.join(", ") : "",
           featuredImage: blog.featuredImage || "",
         })
@@ -212,48 +210,22 @@ export default function EditBlogPage({
                   </p>
                 </div>
 
-                {/* Category and Featured Image Row */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Category <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                      name="category"
-                      required
-                      value={formData.category}
-                      onChange={handleChange}
-                      className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-                    >
-                      <option value="">Select a category</option>
-                      <option value="Technology">Technology</option>
-                      <option value="Design">Design</option>
-                      <option value="Business">Business</option>
-                      <option value="Personal">Personal</option>
-                      <option value="Tutorial">Tutorial</option>
-                      <option value="Web Development">Web Development</option>
-                      <option value="Mobile Development">
-                        Mobile Development
-                      </option>
-                      <option value="UI/UX">UI/UX</option>
-                      <option value="Programming">Programming</option>
-                      <option value="Productivity">Productivity</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Featured Image URL
-                    </label>
-                    <input
-                      type="url"
-                      name="featuredImage"
-                      value={formData.featuredImage}
-                      onChange={handleChange}
-                      className="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2 border"
-                      placeholder="https://example.com/image.jpg"
-                    />
-                  </div>
+                {/* Featured Image Row */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Featured Image URL
+                  </label>
+                  <input
+                    type="url"
+                    name="featuredImage"
+                    value={formData.featuredImage}
+                    onChange={handleChange}
+                    className="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2 border"
+                    placeholder="https://example.com/image.jpg"
+                  />
+                  <p className="mt-1 text-sm text-gray-500">
+                    Optional: Add a featured image URL for your blog post
+                  </p>
                 </div>
 
                 {/* Featured Image Preview */}
