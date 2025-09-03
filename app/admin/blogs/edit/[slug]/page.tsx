@@ -2,6 +2,30 @@
 import { useState, useEffect, use } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
+import Link from "next/link"
+import {
+  IconArrowLeft,
+  IconTag,
+  IconFileText,
+  IconEdit,
+  IconPhoto,
+  IconTrash,
+} from "@tabler/icons-react"
+import FileUpload from "@/components/FileUpload"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Separator } from "@/components/ui/separator"
+import Editor from "@/components/Editor"
 
 export default function EditBlogPage({
   params,
@@ -84,15 +108,27 @@ export default function EditBlogPage({
   }
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     })
   }
+
+  const getWordCount = () => {
+    const textContent = formData.content.replace(/<[^>]*>/g, "")
+    return textContent.split(/\s+/).filter((word) => word.length > 0).length
+  }
+
+  const getCharCount = () => {
+    return formData.content.replace(/<[^>]*>/g, "").length
+  }
+
+  const tagsArray = formData.tags
+    .split(",")
+    .map((tag) => tag.trim())
+    .filter((tag) => tag)
 
   const handleDelete = async () => {
     if (
@@ -128,240 +164,287 @@ export default function EditBlogPage({
   }
 
   return (
-    <div className="px-4 py-6 sm:px-0">
-      <div className="md:grid md:grid-cols-3 md:gap-6">
-        <div className="md:col-span-1">
-          <div className="px-4 sm:px-0">
-            <h3 className="text-lg font-medium leading-6 text-gray-900">
-              Edit Blog Post
-            </h3>
-            <p className="mt-1 text-sm text-gray-600">
-              Update your blog post details and content.
-            </p>
-
-            {/* Preview Link */}
-            <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <h4 className="text-sm font-medium text-blue-900 mb-2">
-                Preview
-              </h4>
-              <a
-                href={`/blogs/${slug}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-blue-600 hover:text-blue-800 underline"
-              >
-                View live blog post →
-              </a>
-            </div>
-
-            {/* Danger Zone */}
-            <div className="mt-6 p-4 bg-red-50 rounded-lg border border-red-200">
-              <h4 className="text-sm font-medium text-red-900 mb-2">
-                Danger Zone
-              </h4>
-              <p className="text-sm text-red-600 mb-3">
-                Once you delete a blog post, there is no going back.
-              </p>
-              <button
-                onClick={handleDelete}
-                className="text-sm bg-red-600 text-white px-3 py-2 rounded-md hover:bg-red-700 transition-colors"
-              >
-                Delete this blog
-              </button>
-            </div>
+    <main>
+      <div className="mb-8">
+        <div className="flex items-center space-x-4 mb-4">
+          <Link href="/admin/blogs">
+            <Button variant="ghost" size="sm" className="pl-2">
+              <IconArrowLeft className="w-4 h-4 mr-2" />
+              Back to Blogs
+            </Button>
+          </Link>
+          <Separator orientation="vertical" className="h-6" />
+          <div className="flex items-center space-x-2">
+            <IconEdit className="w-5 h-5 text-primary" />
+            <h1 className="text-2xl font-bold text-gray-900">Edit Blog Post</h1>
           </div>
         </div>
+        <p className="text-gray-600">
+          Update your blog post with our powerful editor.
+        </p>
+      </div>
 
-        <div className="mt-5 md:mt-0 md:col-span-2">
-          <form onSubmit={handleSubmit}>
-            <div className="shadow sm:rounded-md sm:overflow-hidden">
-              <div className="px-4 py-5 bg-white space-y-6 sm:p-6">
-                {/* Title */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Title <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="title"
-                    required
-                    value={formData.title}
-                    onChange={handleChange}
-                    className="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2 border"
-                    placeholder="Enter blog title..."
-                  />
-                </div>
-
-                {/* Excerpt */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Excerpt
-                  </label>
-                  <textarea
-                    name="excerpt"
-                    rows={3}
-                    value={formData.excerpt}
-                    onChange={handleChange}
-                    className="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2 border"
-                    placeholder="Brief description of the blog post (used in previews and SEO)..."
-                  />
-                  <p className="mt-1 text-sm text-gray-500">
-                    This will be shown in blog previews and search results.
-                  </p>
-                </div>
-
-                {/* Featured Image Row */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Featured Image URL
-                  </label>
-                  <input
-                    type="url"
-                    name="featuredImage"
-                    value={formData.featuredImage}
-                    onChange={handleChange}
-                    className="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2 border"
-                    placeholder="https://example.com/image.jpg"
-                  />
-                  <p className="mt-1 text-sm text-gray-500">
-                    Optional: Add a featured image URL for your blog post
-                  </p>
-                </div>
-
-                {/* Featured Image Preview */}
-                {formData.featuredImage && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Image Preview
-                    </label>
-                    <div className="max-w-sm">
-                      <img
-                        src={formData.featuredImage}
-                        alt="Featured image preview"
-                        className="w-full h-32 object-cover rounded-lg border border-gray-300"
-                        onError={(e) => {
-                          e.currentTarget.style.display = "none"
-                        }}
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {/* Tags */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Tags
-                  </label>
-                  <input
-                    type="text"
-                    name="tags"
-                    value={formData.tags}
-                    onChange={handleChange}
-                    className="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2 border"
-                    placeholder="react, nextjs, javascript, web development"
-                  />
-                  <p className="mt-1 text-sm text-gray-500">
-                    Separate tags with commas. These help categorize your
-                    content.
-                  </p>
-                </div>
-
-                {/* Content */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Content <span className="text-red-500">*</span>
-                  </label>
-                  <textarea
-                    name="content"
-                    rows={16}
-                    required
-                    value={formData.content}
-                    onChange={handleChange}
-                    className="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-3 border font-mono"
-                    placeholder="Write your blog content here...
-
-You can use basic markdown formatting:
-# Heading 1
-## Heading 2
-### Heading 3
-
-**Bold text**
-*Italic text*
-
-- List item 1
-- List item 2
-
-[Link text](https://example.com)"
-                  />
-                  <p className="mt-1 text-sm text-gray-500">
-                    You can use basic Markdown formatting. The content will be
-                    automatically formatted when displayed.
-                  </p>
-                </div>
-
-                {/* Character Count */}
-                <div className="text-right">
-                  <span className="text-sm text-gray-500">
-                    {formData.content.length} characters
-                  </span>
-                </div>
+      <form
+        onSubmit={handleSubmit}
+        className="grid grid-cols-1 xl:grid-cols-4 gap-8"
+      >
+        <div className="xl:col-span-3 space-y-8">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <IconFileText className="w-5 h-5 text-primary" />
+                <span>Basic Information</span>
+              </CardTitle>
+              <CardDescription>
+                Update the fundamental details of your blog post
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="title" className="text-sm font-medium">
+                  Title *
+                </Label>
+                <Input
+                  id="title"
+                  name="title"
+                  required
+                  value={formData.title}
+                  onChange={handleChange}
+                  placeholder="Enter an engaging title for your blog post..."
+                  className="text-lg"
+                />
               </div>
 
-              {/* Form Actions */}
-              <div className="px-4 py-3 bg-gray-50 text-right sm:px-6 space-x-2">
-                <button
-                  type="button"
-                  onClick={() => router.push("/admin/blogs")}
-                  className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-                >
-                  Cancel
-                </button>
+              <div className="space-y-2">
+                <Label htmlFor="excerpt" className="text-sm font-medium">
+                  Excerpt
+                </Label>
+                <Textarea
+                  id="excerpt"
+                  name="excerpt"
+                  value={formData.excerpt}
+                  onChange={handleChange}
+                  placeholder="Write a compelling summary that will appear in previews and search results..."
+                  rows={3}
+                  className="resize-none"
+                />
+                <p className="text-xs text-gray-500">
+                  {formData.excerpt.length}/300 characters recommended
+                </p>
+              </div>
+            </CardContent>
+          </Card>
 
-                <button
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <IconEdit className="w-5 h-5 text-primary" />
+                <span>Content Editor</span>
+              </CardTitle>
+              <CardDescription>
+                Edit your content using our rich text editor. Click the image
+                button to upload images at cursor position.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Editor
+                content={formData.content}
+                onChange={(content) => setFormData({ ...formData, content })}
+              />
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex flex-col space-y-2">
+                <Button
+                  type="submit"
+                  disabled={
+                    isSubmitting || !formData.title || !formData.content
+                  }
+                  className="w-full"
+                >
+                  {isSubmitting ? "Updating..." : "Update Blog"}
+                </Button>
+                <Button
                   type="button"
+                  variant="outline"
                   onClick={() => window.open(`/blogs/${slug}`, "_blank")}
-                  className="bg-gray-600 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                  className="w-full"
                 >
                   Preview
-                </button>
-
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => router.push("/admin/blogs")}
+                  className="w-full"
                 >
-                  {isSubmitting ? (
-                    <>
-                      <svg
-                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                      Updating...
-                    </>
-                  ) : (
-                    "Update Blog"
-                  )}
-                </button>
+                  Cancel
+                </Button>
               </div>
-            </div>
-          </form>
+              <p className="text-xs text-gray-500 text-center">
+                Changes will be saved immediately
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <IconTag className="w-5 h-5 text-primary" />
+                <span>Organization</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label
+                  htmlFor="tags"
+                  className="text-sm font-medium flex items-center space-x-2"
+                >
+                  <IconTag className="w-4 h-4" />
+                  <span>Tags</span>
+                </Label>
+                <Input
+                  id="tags"
+                  name="tags"
+                  value={formData.tags}
+                  onChange={handleChange}
+                  placeholder="react, nextjs, javascript"
+                />
+                <p className="text-xs text-gray-500">
+                  Separate tags with commas
+                </p>
+                {tagsArray.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {tagsArray.map((tag, index) => (
+                      <Badge
+                        key={index}
+                        variant="secondary"
+                        className="text-xs"
+                      >
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <IconPhoto className="w-5 h-5 text-primary" />
+                <span>Featured Image</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-3">
+                <Input
+                  type="url"
+                  name="featuredImage"
+                  value={formData.featuredImage}
+                  onChange={handleChange}
+                  placeholder="https://example.com/image.jpg"
+                />
+
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <Separator className="w-full" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-white px-2 text-gray-500">
+                      Or upload
+                    </span>
+                  </div>
+                </div>
+
+                <FileUpload
+                  onUpload={(url) =>
+                    setFormData({ ...formData, featuredImage: url })
+                  }
+                  accept="image/*"
+                  className="w-full"
+                />
+              </div>
+
+              {formData.featuredImage && (
+                <div className="space-y-2">
+                  <div className="relative group">
+                    <img
+                      src={formData.featuredImage}
+                      alt="Featured image preview"
+                      className="w-full h-32 object-cover rounded-lg border border-gray-200"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() =>
+                        setFormData({ ...formData, featuredImage: "" })
+                      }
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Statistics</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Words:</span>
+                <span className="font-medium">{getWordCount()}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Characters:</span>
+                <span className="font-medium">{getCharCount()}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Read time:</span>
+                <span className="font-medium">
+                  {Math.max(1, Math.ceil(getWordCount() / 200))} min
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-red-200">
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2 text-red-600">
+                <IconTrash className="w-5 h-5" />
+                <span>Danger Zone</span>
+              </CardTitle>
+              <CardDescription className="text-red-600">
+                Once you delete a blog post, there is no going back.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={handleDelete}
+                className="w-full"
+              >
+                <IconTrash className="w-4 h-4 mr-2" />
+                Delete Blog Post
+              </Button>
+            </CardContent>
+          </Card>
         </div>
-      </div>
-    </div>
+      </form>
+    </main>
   )
 }

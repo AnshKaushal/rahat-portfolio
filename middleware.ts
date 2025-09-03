@@ -73,7 +73,7 @@ export function middleware(request: NextRequest) {
 
     // Specific handling for auth routes
     if (pathname.startsWith("/api/auth/")) {
-      const allowedMethods = ["POST", "OPTIONS"]
+      const allowedMethods = ["POST", "OPTIONS", "GET"]
       if (!allowedMethods.includes(request.method)) {
         return new NextResponse("Method Not Allowed", {
           status: 405,
