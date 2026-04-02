@@ -19,6 +19,7 @@ import {
   IconAlignCenter,
   IconAlignRight,
   IconMinus,
+  IconLoader2,
 } from "@tabler/icons-react"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
@@ -429,7 +430,7 @@ export default function Editor({ content, onChange }: EditorProps) {
       {isUploading && (
         <div className="absolute inset-0 bg-white/80 flex items-center justify-center">
           <div className="flex items-center space-x-2">
-            <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            <IconLoader2 className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
             <span className="text-sm text-gray-600">Uploading image...</span>
           </div>
         </div>
